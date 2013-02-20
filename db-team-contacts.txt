@@ -1,0 +1,240 @@
+<!----START MySQL----!>
+
+mysql -u root -p (enter password)
+
+<!----CREATE/USE DATABASE----!>
+
+CREATE DATABASE team_contacts;
+USE team_contacts;
+
+<!----One-To-Many: Team Contacts Profession Table----!>
+
+CREATE TABLE profession
+(
+	prof_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	profession VARCHAR(20) NOT NULL
+);
+
+<!----One-To-Many: Team Contacts Zip_Code Table----!>
+
+CREATE TABLE zip_code
+(
+	zip_code INT(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	city VARCHAR(20) NOT NULL,
+	state VARCHAR(20) NOT NULL
+);
+
+<!----One-To-Many: Team Contacts Status Table----!>
+
+CREATE TABLE status
+(
+	status_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	status VARCHAR(20) NOT NULL
+);
+
+<!----Team Contacts Table----!>
+
+CREATE TABLE team_contacts
+(
+	contact_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	last_name VARCHAR(20) NOT NULL,
+	first_name VARCHAR(20) NOT NULL,
+	phone VARCHAR(20) NOT NULL,
+	email VARCHAR(20) NOT NULL,
+	gender VARCHAR(10) NOT NULL,
+	birthday DATE,
+	prof_id INT(11) NOT NULL,
+	zip_code INT(5) NOT NULL,
+	status_id INT(11) NOT NULL,
+	CONSTRAINT profession_prof_id_fk FOREIGN KEY(prof_id) REFERENCES profession(prof_id),
+	CONSTRAINT zip_code_zip_code_fk FOREIGN KEY(zip_code) REFERENCES zip_code(zip_code),
+	CONSTRAINT status_status_id_fk FOREIGN KEY(status_id) REFERENCES status(status_id)
+);
+
+<!----Seeking Table----!>
+
+CREATE TABLE seeking
+(
+	seeking_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	seeking VARCHAR(20) NOT NULL
+);
+
+<!----Many-To-Many Composite Key Table: Team Contacts Seeking Joining Table (Join Contacts and Seeking)----!>
+
+CREATE TABLE contact_seeking
+(
+	contact_id INT(11) NOT NULL,
+	seeking_id INT(11) NOT NULL,
+	CONSTRAINT team_contacts_contact_id_fk FOREIGN KEY(contact_id) REFERENCES team_contacts(contact_id),
+	CONSTRAINT seeking_seeking_id_fk FOREIGN KEY(seeking_id) REFERENCES seeking(seeking_id)
+);
+
+<!----Interests Table----!>
+
+CREATE TABLE interests
+(
+	interest_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	interest VARCHAR(20) NOT NULL
+);
+
+<!----Many-To-Many Composite Key Table: Team Contacts Seeking Joining Table (Join Contacts and Seeking)----!>
+
+CREATE TABLE contact_interest
+(
+	contact_id INT(11) NOT NULL,
+	interest_id INT(11) NOT NULL,
+	CONSTRAINT team_contacts_contact_id_fk1 FOREIGN KEY(contact_id) REFERENCES team_contacts(contact_id),
+	CONSTRAINT interests_interest_id_fk1 FOREIGN KEY(interest_id) REFERENCES interests(interest_id)
+);
+
+<!----INSERT VALUES INTO THE TABLES----!>
+
+INSERT INTO profession
+VALUES
+(null, 'Technical Writer'),
+(null, 'Manager'),
+(null, 'Cruise Ship Captain'),
+(null, 'Software Sales'),
+(null, 'System Administrator'),
+(null, 'Bookshop Owner'),
+(null, 'Unemployed'),
+(null, 'UNIX Sysadmin'),
+(null, 'Computer Programmer'),
+(null, 'salesman');
+
+INSERT INTO zip_code 
+VALUES
+(11232, 'Brooklyn', 'NY'),
+(11206, 'Brooklyn', 'NY'),
+(10453, 'New York', 'NY'),
+(10010, 'New York', 'NY'),
+(10012, 'New York', 'NY'),
+(11361, 'Queens', 'NY'),
+(10302, 'Staten Island', 'NY'),
+(10303, 'Staten Island', 'NY');
+
+INSERT INTO status
+VALUES 
+(null, 'single'), 
+(null, 'divorced'), 
+(null, 'married'), 
+(null, 'committed relationship');
+
+INSERT INTO interests
+VALUES 
+(null, 'kayaking'), 
+(null, 'reptiles'), 
+(null, 'women'), 
+(null, 'sailing'), 
+(null, 'fishing'), 
+(null, 'yachting'),
+(null, 'nothing'), 
+(null, 'drinking'), 
+(null, 'collecting books'), 
+(null, 'scuba diving'), 
+(null, 'acting'), 
+(null, 'dancing'),
+(null, 'poetry'), 
+(null, 'screenwriting');
+
+INSERT INTO seeking
+VALUES 
+(null, 'relationship'), 
+(null, 'friends'), 
+(null, 'women to date'), 
+(null, 'women for casual relationships'),
+(null, 'new job'), 
+(null, 'cooking	employment'), 
+(null, 'nothing');
+
+INSERT INTO team_contacts
+VALUES
+(null, 'Anderson', 'Jillian', '(123) 456-7891', 'jill_anderson@breakneckpizza.com', 'F', '1980-09-05', 1, 11232, 1),
+(null, 'Kenton', 'Leo', '(111) 213-1415', 'lkenton@starbuzzcoffee.com', 'M', '1974-01-10', 2, 11206, 2),
+(null, 'McGavin', 'Darrin', '(161) 718-1920', 'captainlove@headfirsttheater.com', 'M', '1966-01-23', 3, 10453, 1),
+(null, 'Franklin', 'Joe', '(212) 222-3245', 'joe_franklin@leapinlimos.com', 'M', '1977-04-28', 4, 10010, 3),
+(null, 'Hamilton', 'Jamie', '(526) 272-8293', 'dontbother@starbuzzcoffee.com', 'F', '1964-09-10', 5, 10012, 3),
+(null, 'Chevrolet', 'Maurice', '(313) 233-3435', 'bookman4u@objectville.net', 'M', '1962-07-01', 6, 11361, 3),
+(null, 'Kroger', 'Renee', '(363) 738-3940', 'poorrenee@mightygumball.net', 'F', '1976-12-03', 7, 10302, 2),
+(null, 'Mendoza', 'Angelina', '(424) 243-4445', 'angelina@starbuzzcoffee.com', 'F', '1979-08-19', 8, 10303, 3),
+(null, 'Murphy', 'Donald', '(464) 748-4950', 'padraic@tikibeanlounge.com', 'M', '1967-01-23', 9, 11232, 4),
+(null, 'Spatner', 'John', '(515) 253-5455', 'jpoet@objectville.net', 'M', '1963-04-18', 10, 11206, 2);
+
+INSERT INTO contact_interest
+VALUES (1,1), (1,2), (2,3), (3,4), (3,5), (3,6), (4,7), (5,8), (5,9), (6,10), (6,11), (7,7), (8,12), (9,12), (10,13), (10,14);
+
+INSERT INTO contact_seeking
+VALUES (1,1), (1,2), (2,3), (3,4), (4,5), (4,1), (4,2), (5,2), (6,6), (7,7), (8,5), (9,6), (9,2), (10,3);
+
+<!--Job Current--!>
+
+<!--Job Desired-->
+
+<!----Job Listing Table---->
+
+<!----INNER SELECT STATEMENTS: MANY-TO-MANY RELATIONSHIP----!>
+
+SELECT team_contacts.first_name, team_contacts.last_name, interests.interest FROM team_contacts
+INNER JOIN contact_interest
+ON team_contacts.contact_id = contact_interest.contact_id
+INNER JOIN interests
+ON contact_interest.interest_id = interests.interest_id
+WHERE team_contacts.last_name = 'Kroger'
+GROUP BY team_contacts.last_name
+HAVING COUNT(*) < 5;
+
+<!----INNER JOIN SELECT STATEMENTS: ONE-TO-MANY RELATIONSHIP----!>
+
+SELECT team_contacts.last_name, profession.profession FROM team_contacts
+INNER JOIN profession 
+ON team_contacts.prof_id = profession.prof_id
+GROUP BY team_contacts.last_name;
+
+<!----CROSS JOIN SELECT STATEMENTS----!>
+
+SELECT team_contacts.last_name, profession.profession FROM team_contacts INNER JOIN profession;
+
+<!----COUNT THE NUMBER OF DUPLICATES----!>
+
+SELECT team_contacts.gender, COUNT(gender) AS count 
+FROM team_contacts
+GROUP BY team_contacts.gender
+ORDER BY count;
+
+|-------------------------------------------------------------------------------|
+|-------------------------------GENERAL NOTES-----------------------------------|
+|-------------------------------------------------------------------------------|
+SHOW DATABASES;
+SHOW TABLES;
+DESCRIBE ...;
+|-------------------------------------------------------------------------------|
+[<, >, <=, >=, <>,AND, OR, LIKE, BETWEEN... AND..., WHERE...NOT, ASC, DESC]
+SELECT ... FROM ...;
+SELECT ... FROM ... WHERE ...;
+SELECT ... FROM ... WHERE ... ORDER BY ... ASC, ... DESC;
+SELECT ... FROM ... WHERE ... IS NULL;
+SELECT ... FROM ... WHERE location LIKE '%...%';
+SELECT ... FROM ... WHERE ... LIKE '..._';
+SELECT ... FROM ... WHERE ... BETWEEN ... AND ...;
+SELECT ... FROM ... WHERE ... IN('...', '...', ...);
+SELECT ... FROM ... ORDER BY ...;
+SELECT DISTINCT ... FROM ... ORDER BY ... LIMIT #;
+|-------------------------------------------------------------------------------|
+UPDATE ... SET ... WHERE ...;
+UPDATE ...
+SET ... = 
+CASE
+	WHEN ... = '%...%' THEN '...'
+	WHEN ... = '%...%' THEN '...'
+	ELSE '...' 
+END;
+|-------------------------------------------------------------------------------|
+DROP TABLE ...;	
+ALTER TABLE ... DROP COLUMN ...;
+ALTER TABLE ... RENAME TO ...;
+ALTER TABLE ... CHANGE COLUMN ... ... INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(...);
+ALTER TABLE ... MODIFY COLUMN ... ...;
+ALTER TABLE ... ADD COLUMN ... INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY(...);
+ALTER TABLE ... DROP PRIMARY KEY;
+DELETE FROM ... WHERE ...;
+|-------------------------------------------------------------------------------|
