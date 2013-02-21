@@ -1,15 +1,17 @@
+[!No Actual Personal Data are used!]
+
 <!----START MySQL----!>
 
 mysql -u root -p (enter password)
 
 <!----CREATE/USE DATABASE----!>
 
-CREATE DATABASE team_contacts;
+CREATE DATABASE IF NOT EXISTS team_contacts;
 USE team_contacts;
 
 <!----One-To-Many: Team Contacts Profession Table----!>
 
-CREATE TABLE profession
+CREATE TABLE IF NOT EXISTS profession
 (
 	prof_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	profession VARCHAR(20) NOT NULL
@@ -17,7 +19,7 @@ CREATE TABLE profession
 
 <!----One-To-Many: Team Contacts Zip_Code Table----!>
 
-CREATE TABLE zip_code
+CREATE TABLE IF NOT EXISTS zip_code
 (
 	zip_code INT(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	city VARCHAR(20) NOT NULL,
@@ -26,7 +28,7 @@ CREATE TABLE zip_code
 
 <!----One-To-Many: Team Contacts Status Table----!>
 
-CREATE TABLE status
+CREATE TABLE IF NOT EXISTS status
 (
 	status_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	status VARCHAR(20) NOT NULL
@@ -34,7 +36,7 @@ CREATE TABLE status
 
 <!----Team Contacts Table----!>
 
-CREATE TABLE team_contacts
+CREATE TABLE IF NOT EXISTS team_contacts
 (
 	contact_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	last_name VARCHAR(20) NOT NULL,
@@ -53,7 +55,7 @@ CREATE TABLE team_contacts
 
 <!----Seeking Table----!>
 
-CREATE TABLE seeking
+CREATE TABLE IF NOT EXISTS seeking
 (
 	seeking_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	seeking VARCHAR(20) NOT NULL
@@ -61,7 +63,7 @@ CREATE TABLE seeking
 
 <!----Many-To-Many Composite Key Table: Team Contacts Seeking Joining Table (Join Contacts and Seeking)----!>
 
-CREATE TABLE contact_seeking
+CREATE TABLE IF NOT EXISTS contact_seeking
 (
 	contact_id INT(11) NOT NULL,
 	seeking_id INT(11) NOT NULL,
@@ -71,7 +73,7 @@ CREATE TABLE contact_seeking
 
 <!----Interests Table----!>
 
-CREATE TABLE interests
+CREATE TABLE IF NOT EXISTS interests
 (
 	interest_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	interest VARCHAR(20) NOT NULL
@@ -79,7 +81,7 @@ CREATE TABLE interests
 
 <!----Many-To-Many Composite Key Table: Team Contacts Seeking Joining Table (Join Contacts and Seeking)----!>
 
-CREATE TABLE contact_interest
+CREATE TABLE IF NOT EXISTS contact_interest
 (
 	contact_id INT(11) NOT NULL,
 	interest_id INT(11) NOT NULL,
@@ -172,12 +174,24 @@ VALUES (1,1), (1,2), (2,3), (3,4), (4,5), (4,1), (4,2), (5,2), (6,6), (7,7), (8,
 
 <!----Job Listing Table---->
 
-<!----INNER SELECT STATEMENTS: MANY-TO-MANY RELATIONSHIP----!>
 CARTESIAN JOIN [CROSS JOIN] - values from the table1 joined with each value from the table2.
-INNER JOIN - a type of CARTESIAN JOIN where the records are combined from two tables using comparison operators in a condition.
+INNER JOIN - records are combined from two tables where there is a match using comparison operators in a condition.
 	EQUIJOIN inner joins test for equality.
 	NON-EQUIJOIN inner joins test for inequality.
 	NATURAL JOIN combines the two tables that share the same name. [the same result as with equijoin]
+OUTER JOIN - returns all rows from one of the tables whether there is a match with the other table or not.
+	LEFT OUTER JOIN - matches all rows in the LEFT table [before the join] and matches them to rows in the RIGHT table[after the join].
+					  If null, right table has no values that correspond to the left table.
+	RIGHT OUTER JOIN - matches all rows in the RIGHT table [after the join] and matches them to rows in the LEFT table[before the join].
+					  If null, left table has no values that correspond to the right table.
+SELF JOIN - joins a single table to itself.
+UNION - combine the results of queries.
+
+<!----CROSS JOIN SELECT STATEMENTS----!>
+
+SELECT team_contacts.last_name, profession.profession FROM team_contacts CROSS JOIN profession;
+
+<!----INNER JOIN SELECT STATEMENT: MANY-TO-MANY RELATIONSHIP----!>
 
 SELECT team_contacts.first_name, team_contacts.last_name, interests.interest FROM team_contacts
 INNER JOIN contact_interest
@@ -188,16 +202,16 @@ WHERE team_contacts.last_name = 'Kroger'
 GROUP BY team_contacts.last_name
 HAVING COUNT(*) < 5;
 
-<!----INNER JOIN SELECT STATEMENTS: ONE-TO-MANY RELATIONSHIP----!>
+<!----INNER SELECT STATEMENT: ONE-TO-MANY RELATIONSHIP----!>
 
 SELECT team_contacts.last_name, profession.profession FROM team_contacts
 INNER JOIN profession 
 ON team_contacts.prof_id = profession.prof_id
 GROUP BY team_contacts.last_name;
 
-<!----CROSS JOIN SELECT STATEMENTS----!>
+<!----OUTER JOIN SELECT STATEMENTS----!>
 
-SELECT team_contacts.last_name, profession.profession FROM team_contacts INNER JOIN profession;
+SELECT tc.last_name, prof.profession FROM profession prof LEFT OUTER JOIN team_contacts tc ON tc.prof_id = prof.prof_id;
 
 <!----COUNT THE NUMBER OF DUPLICATES----!>
 
@@ -205,6 +219,29 @@ SELECT team_contacts.gender, COUNT(gender) AS count
 FROM team_contacts
 GROUP BY team_contacts.gender
 ORDER BY count;
+
+<!----Subquery----!>
+
+SELECT tc.last_name, tc.first_name, inter.interest FROM team_contacts tc INNER JOIN contact_interest ci ON tc.contact_id = ci.contact_id INNER JOIN interests inter ON ci.interest_id = inter.interest_id WHERE EXISTS tc.last_name IN(SELECT last_name FROM team_contacts WHERE gender = 'F');
+
+<!----UNION[no duplicates] / UNION ALL[duplicates]----!>
+
+SELECT last_name FROM team_contacts UNION SELECT interest FROM interests ORDER BY last_name;
+
+<!----TRANSACTIONS----!>
+
+ALTER TABLE ... TYPE = InnoDB;  - change the type of the table engine
+START TRANSACTION;              - keeps track of all the SQL statements
+COMMIT;                         - makes statements permanent, no changes occur until commit
+ROLLBACK;                       - reverses everything to the way it was before START TRANSACTION
+
+<!----Permissions----!>
+
+CREATE USER user_name IDENTIFIED BY 'password';- create a new user
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('password');
+GRANT SELECT/INSERT/DELETE/UPDATE ON ... TO ...;
+GRANT ALL ON *.* TO ...;
+REVOKE ... ON FROM ...CASCADE/RESTRICT;
 
 |-------------------------------------------------------------------------------|
 |-------------------------------GENERAL NOTES-----------------------------------|
