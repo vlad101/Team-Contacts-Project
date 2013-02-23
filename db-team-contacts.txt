@@ -1,3 +1,89 @@
+|-------------------------------------------------------------------------------|
+|-------------------------------GENERAL NOTES-----------------------------------|
+|-------------------------------------------------------------------------------|
+SHOW DATABASES;
+SHOW TABLES;
+DESCRIBE ...;
+|-------------------------------------------------------------------------------|
+ALTER TABLE ... ADD INDEX(column_name(# of char));
+ALTER TABLE ... ADD PRIMARY KEY(...);
+ALTER TABLE table_name ADD CONSTRAINT fk_Pertable_name FOREIGN KEY(...) REFERENCES ...(...);
+DROP index index_name ON table_name;
+ALTER TABLE table_name DROP PRIMARY KEY;
+ALTER TABLE table_name DROP FOREIGN KEY fk_Pertable_name;
+|-------------------------------------------------------------------------------|
+[<, >, <=, >=, <>,AND, OR, LIKE, BETWEEN... AND..., WHERE...NOT, ASC, DESC]
+SELECT ... FROM ...;
+SELECT ... FROM ... WHERE ...;
+SELECT ... FROM ... WHERE ... ORDER BY ... ASC, ... DESC;
+SELECT ... FROM ... WHERE ... IS NULL;
+SELECT ... FROM ... WHERE location LIKE '%...%';
+SELECT ... FROM ... WHERE ... LIKE '..._';
+SELECT ... FROM ... WHERE ... BETWEEN ... AND ...;
+SELECT ... FROM ... WHERE ... IN('...', '...', ...);
+SELECT ... FROM ... ORDER BY ...;
+SELECT DISTINCT ... FROM ... ORDER BY ... LIMIT #;
+|-------------------------------------------------------------------------------|
+UPDATE ... SET ... WHERE ...;
+UPDATE ...
+SET ... = 
+CASE
+	WHEN ... = '%...%' THEN '...'
+	WHEN ... = '%...%' THEN '...'
+	ELSE '...' 
+END;
+|-------------------------------------------------------------------------------|
+DROP TABLE ...;	
+ALTER TABLE ... DROP COLUMN ...;
+ALTER TABLE ... RENAME TO ...;
+ALTER TABLE ... CHANGE COLUMN ... ... INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(...);
+ALTER TABLE ... MODIFY COLUMN ... ...;
+ALTER TABLE ... ADD COLUMN ... INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY(...);
+ALTER TABLE ... DROP PRIMARY KEY;
+DELETE FROM ... WHERE ...;
+|-------------------------------------------------------------------------------|
+LOCK TABLES tablename1 READ, tablename2 READ ...;
+UNLOCK TABLES
+|-------------------------------------------------------------------------------|
+mysqldump -u user -ppassword db_name                // dump database to the screen
+mysqldump -u user -ppassword db_name > filename.sql // dump database to the file, creating backup file
+LOCK TABLES db_name.table_name READ;                // backing up a single table
+mysqldump -u user -ppassword db_name table_name > filename.sql
+UNLOCK TABLES;
+mysqldump -u user -ppassword --all-databases > all_databases.sql  // Backing up all tables
+mysql -u user -ppassword < all_databases.sql                      // Restoring an entire set of databases
+mysql -u user -ppassword < filename.sql                           // Restore the database
+mysql -u user -ppassword -D db_name < filename.sql                // Restore the single table
+|-------------------------------------------------------------------------------|
+ALTER TABLE ... TYPE = InnoDB;  - change the type of the table engine
+START TRANSACTION;              - keeps track of all the SQL statements
+COMMIT;                         - makes statements permanent, no changes occur until commit
+ROLLBACK;                       - reverses everything to the way it was before START TRANSACTION
+|-------------------------------------------------------------------------------|
+CREATE USER user_name IDENTIFIED BY 'password';- create a new user
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('password');
+GRANT SELECT/INSERT/DELETE/UPDATE ON ... TO ...;
+GRANT ALL ON *.* TO ...;
+GRANT PRIVILEGES ON db_name.table_name TO 'username'@'hostname' IDENTIFIED BY 'password';
+REVOKE ... ON FROM ...CASCADE/RESTRICT;
+|-------------------------------------------------------------------------------|
+1st Normal Form Requirements:
+	- Add a primary key to uniquely identify data [uniquely identify a record]
+	- Atomic values in each column of a table [no multi-value in a single column]
+	- No repeating groups [no columns store the same information]
+
+2nd Normal Form Requirements:
+	- All requirements for the 1st Normal Form
+	- Move redundant data into a separate table [relate tables by using a foreign key]
+	
+3rd Normal Form Requirements:
+	- All requirements for the 2nd Normal Form
+	- Eliminate fields that do not depend on a Primary key [create an intermediary table as the composite key]
+
+|-------------------------------------------------------------------------------|
+|----Sample Information for the Construction of the Team Cotacts Database-------|
+|-------------------------------------------------------------------------------|
+
 [!No Actual Personal Data are used!]
 
 <!----START MySQL----!>
@@ -228,55 +314,3 @@ SELECT tc.last_name, tc.first_name, inter.interest FROM team_contacts tc INNER J
 
 SELECT last_name FROM team_contacts UNION SELECT interest FROM interests ORDER BY last_name;
 
-<!----TRANSACTIONS----!>
-
-ALTER TABLE ... TYPE = InnoDB;  - change the type of the table engine
-START TRANSACTION;              - keeps track of all the SQL statements
-COMMIT;                         - makes statements permanent, no changes occur until commit
-ROLLBACK;                       - reverses everything to the way it was before START TRANSACTION
-
-<!----Permissions----!>
-
-CREATE USER user_name IDENTIFIED BY 'password';- create a new user
-SET PASSWORD FOR 'root'@'localhost' = PASSWORD('password');
-GRANT SELECT/INSERT/DELETE/UPDATE ON ... TO ...;
-GRANT ALL ON *.* TO ...;
-REVOKE ... ON FROM ...CASCADE/RESTRICT;
-
-|-------------------------------------------------------------------------------|
-|-------------------------------GENERAL NOTES-----------------------------------|
-|-------------------------------------------------------------------------------|
-SHOW DATABASES;
-SHOW TABLES;
-DESCRIBE ...;
-|-------------------------------------------------------------------------------|
-[<, >, <=, >=, <>,AND, OR, LIKE, BETWEEN... AND..., WHERE...NOT, ASC, DESC]
-SELECT ... FROM ...;
-SELECT ... FROM ... WHERE ...;
-SELECT ... FROM ... WHERE ... ORDER BY ... ASC, ... DESC;
-SELECT ... FROM ... WHERE ... IS NULL;
-SELECT ... FROM ... WHERE location LIKE '%...%';
-SELECT ... FROM ... WHERE ... LIKE '..._';
-SELECT ... FROM ... WHERE ... BETWEEN ... AND ...;
-SELECT ... FROM ... WHERE ... IN('...', '...', ...);
-SELECT ... FROM ... ORDER BY ...;
-SELECT DISTINCT ... FROM ... ORDER BY ... LIMIT #;
-|-------------------------------------------------------------------------------|
-UPDATE ... SET ... WHERE ...;
-UPDATE ...
-SET ... = 
-CASE
-	WHEN ... = '%...%' THEN '...'
-	WHEN ... = '%...%' THEN '...'
-	ELSE '...' 
-END;
-|-------------------------------------------------------------------------------|
-DROP TABLE ...;	
-ALTER TABLE ... DROP COLUMN ...;
-ALTER TABLE ... RENAME TO ...;
-ALTER TABLE ... CHANGE COLUMN ... ... INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(...);
-ALTER TABLE ... MODIFY COLUMN ... ...;
-ALTER TABLE ... ADD COLUMN ... INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY(...);
-ALTER TABLE ... DROP PRIMARY KEY;
-DELETE FROM ... WHERE ...;
-|-------------------------------------------------------------------------------|
