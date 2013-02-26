@@ -1,122 +1,93 @@
 <?php
 
-/////// retrieving contacts data ///////
-$query = mysql_query("SELECT * FROM team_contacts");
-if(!$query)
-	die("Unable to access database: " . mysql_error());
+require_once 'login.php';
+	
+echo <<<_END
 
-echo '<table border="1"><tr><th>Last Name</th><th>First Name</th><th>Phone</th>' .
-	 '<th>E-mail</th><th>Gender</th><th>Birthday</th><th>Zip Code</th><th>Delete Record</th></tr>';
-$rows = mysql_num_rows($query);
-for($i = 0; $i < $rows; $i++)
-{
-	$row = mysql_fetch_row($query);
-	echo <<<_END
-	<tr><td>$row[1]</td><td>$row[2]</td><td>$row[3]</td><td>$row[4]</td>
-	<td>$row[5]</td><td>$row[6]</td><td>$row[8]</td>
-	<td>
-		<form action="testphpmysql1.php" method="post">
-			<input type="hidden" name="delete" value="yes" />
-			<input type="hidden" name="contact_id" value="$row[0]" />
-			<input type="submit" value="Delete Record!" />
-		</form>
-	</td>
-	</tr>
+<html>
+	<head>
+		<title>PHP-MySQL Form</title>
+	</head>
+	<body>
+	
 _END;
-}
-echo '</table><br /><br />';
 
-/////// retrieving contacts interests ///////
-$query = mysql_query(
-						  'SELECT tc.last_name, inter.interest FROM team_contacts AS tc ' . 
-						  'INNER JOIN contact_interest AS ci ' . 
-						  'ON tc.contact_id=ci.contact_id ' . 
-						  'INNER JOIN interests AS inter ' . 
-						  'ON inter.interest_id=ci.interest_id ' . 
-						  'ORDER BY last_name'
-					 );
-if(!$query) 
-	die("Unable to access database: " . mysql_error());
-
-echo '<table border="1"><tr><th>Last Name</th><th>Interests</th></tr>';
-$rows = mysql_num_rows($query);
-for($j = 0; $j < $rows; $j++)
+if(
+	isset($_POST['last_name'])  && isset($_POST['first_name']) &&
+	isset($_POST['phone'])      && isset($_POST['email'])      && 
+	isset($_POST['gender'])     && isset($_POST['birthday'])   && 
+	isset($_POST['profession']) && isset($_POST['seeking'])    && 
+	isset($_POST['interest'])   && isset($_POST['status'])     && 
+	isset($_POST['zip_code'])   && isset($_POST['city'])       && 
+	isset($_POST['state'])
+  )
 {
-	$row = mysql_fetch_row($query);
-	echo "<tr><td>$row[0]</td><td>$row[1]</td></tr>";
+	$last_name = sanitizeMySQL($_POST['last_name']);  
+	$first_name = sanitizeMySQL($_POST['first_name']);
+	$phone = sanitizeMySQL($_POST['phone']); 
+	$email = sanitizeMySQL($_POST['email']);
+	$gender = sanitizeMySQL($_POST['gender']);
+	$birthday = sanitizeMySQL($_POST['birthday']); 
+	$profession = sanitizeMySQL($_POST['profession']);
+	$seeking = sanitizeMySQL($_POST['seeking']); 
+	$interest = sanitizeMySQL($_POST['interest']);
+	$status = sanitizeMySQL($_POST['status']); 
+	$zip_code = sanitizeMySQL($_POST['zip_code']);
+	$city = sanitizeMySQL($_POST['city']);
+	$state = sanitizeMySQL($_POST['state']);
+	
+	require_once 'insert.php';
 }
-echo '</table><br /><br />';
 
-/////// retrieving contacts seeking
-$query = mysql_query(
-						  'SELECT tc.last_name, s.seeking FROM team_contacts AS tc ' . 
-						  'INNER JOIN contact_seeking AS cs ' . 
-						  'ON tc.contact_id=cs.contact_id ' . 
-						  'INNER JOIN seeking AS s ' . 
-						  'ON s.seeking_id=cs.seeking_id ' . 
-						  'ORDER BY last_name'
-					 );
-if(!$query) 
-	die("Unable to access database: " . mysql_error());
-
-echo '<table border="1"><tr><th>Last Name</th><th>Seeking</th></tr>';
-$rows = mysql_num_rows($query);
-for($j = 0; $j < $rows; $j++)
+// used in select.php team_contacts table
+if(isset($_POST['delete']) && isset($_POST['contact_id']))
 {
-	$row = mysql_fetch_row($query);
-	echo "<tr><td>$row[0]</td><td>$row[1]</td></tr>";
+	$contact_id = sanitizeMySQL($_POST['contact_id']);
+	$query = mysql_query("DELETE FROM team_contacts WHERE contact_id='$contact_id'");
+	if(!$query)
+		die("Unable to access database: " . mysql_error());
 }
-echo '</table><br /><br />';
 
-// retrieving contacts status
-$query = mysql_query(
-					"SELECT tc.last_name, st.status FROM team_contacts " . 
-					"AS tc INNER JOIN status AS st ON tc.status_id=st.status_id"
-					);
-if(!$query) 
-	die("Unable to access database: " . mysql_error());
+echo <<<_END
+	<form action="testphpmysql1.php" method="post">
+<pre>
+         Last Name  <input type="text" name="last_name" value="Smith" />
+        First Name  <input type="text" name="first_name" value="John" />
+             Phone  <input type="text" name="phone" value="(123) 456-7891" />
+            E-mail  <input type="text" name="email" value="email@mail.com" />
+            Gender  <input type="text" name="gender" value="F" />
+          Birthday  <input type="text" name="birthday" value="1999-07-21" />
+        Profession  <input type="text" name="profession" value="Manager" />
+           Seeking  <input type="text" name="seeking" value="Relationship" />
+         Interests  <input type="text" name="interest" value="Dancing" />
+            Status  <input type="text" name="status" value="Single" />
+          Zip Code  <input type="text" name="zip_code" value="12345" />
+              City  <input type="text" name="city" value="Brooklyn" />
+             State  <input type="text" name="state" value="NY" />
+                    <input type="submit" value="Submit!" />
+</pre>
+	</form><br />
+_END;
 
-echo '<table border="1"><tr><th>Last Name</th><th>Status</th></tr>';
-$rows = mysql_num_rows($query);
-for($i = 0; $i < $rows; $i++)
+require_once 'select.php';
+
+echo '</body></html>';
+
+function sanitizeString($var)
 {
-	$row = mysql_fetch_row($query);
-	echo "<tr><td>$row[0]</td><td>$row[1]</td></tr>";
+	if(get_magic_quotes_gpc())
+		$var = strpslashes($var);
+	$var = htmlentities($var);
+	$var = strip_tags($var);
+	return $var; 
 }
-echo '</table><br /><br />';
 
-// retrieving contacts profession
-$query = mysql_query(
-					"SELECT tc.last_name, prof.profession FROM team_contacts AS tc " .
-					"INNER JOIN profession AS prof ON tc.prof_id=prof.prof_id;"
-					);
-if(!$query) 
-	die("Unable to access database: " . mysql_error());
-
-echo '<table border="1"><tr><th>Last Name</th><th>Profession</th></tr>';
-$rows = mysql_num_rows($query);
-for($i = 0; $i < $rows; $i++)
+function sanitizeMySQL($var)
 {
-	$row = mysql_fetch_row($query);
-	echo "<tr><td>$row[0]</td><td>$row[1]</td></tr>";
+	$var = mysql_real_escape_string($var);
+	$var = sanitizeString($var);
+	return $var;
 }
-echo '</table><br /><br />';
-
-// retrieving contacts zip_code
-$query = mysql_query(
-					"SELECT tc.last_name, zc.zip_code, zc.city, zc.state FROM team_contacts " . 
-					"AS tc INNER JOIN zip_code AS zc ON tc.zip_code=zc.zip_code"
-					);
-if(!$query) 
-	die("Unable to access database: " . mysql_error());
-
-echo '<table border="1"><tr><th>Last Name</th><th>Zip Code</th><th>City</th><th>State</th></tr>';
-$rows = mysql_num_rows($query);
-for($i = 0; $i < $rows; $i++)
-{
-	$row = mysql_fetch_row($query);
-	echo "<tr><td>$row[0]</td><td>$row[1]</td><td>$row[2]</td><td>$row[3]</td></tr>";
-}
-echo '</table><br /><br />';
-
+	
 ?>
+

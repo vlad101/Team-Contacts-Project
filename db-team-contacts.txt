@@ -8,7 +8,7 @@ DESCRIBE ...;
 ALTER TABLE ... ADD INDEX(column_name(# of char));
 ALTER TABLE ... ADD PRIMARY KEY(...);
 ALTER TABLE table_name ADD CONSTRAINT fk_Pertable_name FOREIGN KEY(...) REFERENCES ...(...);
-DROP index index_name ON table_name;
+ALTER TABLE table_name DROP index_name ON table_name;
 ALTER TABLE table_name DROP PRIMARY KEY;
 ALTER TABLE table_name DROP FOREIGN KEY fk_Pertable_name;
 |-------------------------------------------------------------------------------|
@@ -254,12 +254,41 @@ VALUES (1,1), (1,2), (2,3), (3,4), (3,5), (3,6), (4,7), (5,8), (5,9), (6,10), (6
 INSERT INTO contact_seeking
 VALUES (1,1), (1,2), (2,3), (3,4), (4,5), (4,1), (4,2), (5,2), (6,6), (7,7), (8,5), (9,6), (9,2), (10,3);
 
-<!--Job Current--!>
+<!----Modify Constraints---->
 
-<!--Job Desired-->
+<MODIFY FOREIGN KEY CONSTRAINT team_contacts table>
+<DROP>
+SHOW CREATE TABLE team_contacts;
+ALTER TABLE team_contacts DROP FOREIGN KEY prof_id_fk;
+ALTER TABLE team_contacts DROP FOREIGN KEY status_status_id_fk;
+ALTER TABLE team_contacts DROP FOREIGN KEY zip_code_zip_code_fk;
 
-<!----Job Listing Table---->
+<ADD>
+ALTER TABLE team_contacts ADD CONSTRAINT profession_prof_id_fk FOREIGN KEY (prof_id) REFERENCES profession (prof_id) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE team_contacts ADD CONSTRAINT status_status_id_fk FOREIGN KEY (status_id) REFERENCES status (status_id) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE team_contacts ADD CONSTRAINT zip_code_zip_code_fk FOREIGN KEY (zip_code) REFERENCES zip_code (zip_code) ON DELETE RESTRICT ON UPDATE CASCADE;
 
+<MODIFY FOREIGN KEY CONSTRAINT contact_interest table>
+<DROP>
+SHOW CREATE TABLE contact_interest;
+ALTER TABLE contact_interest DROP FOREIGN KEY interests_interest_id_fk1;
+ALTER TABLE contact_interest DROP FOREIGN KEY team_contacts_contact_id_fk1;
+
+<ADD>
+ALTER TABLE contact_interest ADD CONSTRAINT interests_interest_id_fk1 FOREIGN KEY (interest_id) REFERENCES interests (interest_id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE contact_interest ADD CONSTRAINT team_contacts_contact_id_fk1 FOREIGN KEY (contact_id) REFERENCES team_contacts (contact_id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+<MODIFY FOREIGN KEY CONSTRAINT contact_seeking table>
+<DROP>
+SHOW CREATE TABLE contact_seeking;
+ALTER TABLE contact_seeking DROP FOREIGN KEY seeking_seeking_id_fk;
+ALTER TABLE contact_seeking DROP FOREIGN KEY team_contacts_contact_id_fk;
+
+<ADD>
+ALTER TABLE contact_seeking ADD CONSTRAINT seeking_seeking_id_fk FOREIGN KEY (seeking_id) REFERENCES seeking (seeking_id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE contact_seeking ADD CONSTRAINT team_contacts_contact_id_fk FOREIGN KEY (contact_id) REFERENCES team_contacts (contact_id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+<--JOINS-->
 CARTESIAN JOIN [CROSS JOIN] - values from the table1 joined with each value from the table2.
 INNER JOIN - records are combined from two tables where there is a match using comparison operators in a condition.
 	EQUIJOIN inner joins test for equality.
