@@ -6,13 +6,18 @@ if(!$query)
 	die("Unable to access database: " . mysql_error());
 
 echo '<table border="1"><tr><th>Last Name</th><th>First Name</th><th>Phone</th>' .
-	 '<th>E-mail</th><th>Delete Record</th></tr>';
+	 '<th>E-mail</th><th>Update Record</th><th>Delete Record</th></tr>';
 $rows = mysql_num_rows($query);
 for($i = 0; $i < $rows; $i++)
 {
 	$row = mysql_fetch_row($query);
 	echo <<<_END
 	<tr><td>$row[1]</td><td>$row[2]</td><td>$row[3]</td><td>$row[4]</td>
+	<td>
+		<form action="update.php" method="post">
+			<button type="submit" name="contact_id" value="$row[0]">Update Record!</button>
+		</form>
+	</td>
 	<td>
 		<form action="testphpmysql1.php" method="post">
 			<input type="hidden" name="delete" value="yes" />
