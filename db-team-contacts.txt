@@ -175,6 +175,15 @@ CREATE TABLE IF NOT EXISTS contact_interest
 	CONSTRAINT interests_interest_id_fk1 FOREIGN KEY(interest_id) REFERENCES interests(interest_id)
 );
 
+CREATE TABLE users
+(
+	user_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	last_name varchar(30) NOT NULL,
+	first_name varchar(30) NOT NULL,
+	username varchar(30) NOT NULL UNIQUE,
+	password varchar(40) NOT NULL
+);
+
 <!----INSERT VALUES INTO THE TABLES----!>
 
 INSERT INTO profession
