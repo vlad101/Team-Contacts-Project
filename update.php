@@ -173,9 +173,7 @@ if(
 	
 		$insertID_status = mysql_insert_id();     // get an id of the inseted profession	
 	}
-	
-	
-	
+		
 	// update contact info
 	$query = mysql_query(
 						   "
@@ -195,7 +193,101 @@ if(
 						);
 	if(!$query)
 		die("Unable to access database: " . mysql_error());
+		
+		
+	/*
+		//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			/////// update interests ///////
+
+	$insertID_interest = 0;
+	$interest_found = FALSE;
+
+	$query = mysql_query('SELECT * FROM interests');
+	if(!$query)
+		die("Unable to access database: " . mysql_error());
+
+	// check if the profession is in the table
+	$rows = mysql_num_rows($query);
+
+	for($i = 0; $i < $rows; $i++)
+	{
+		$row = mysql_fetch_row($query);
+
+		// if profession is found
+		if($row[1] == $interest)
+		{
+			$insertID_interest = $row[0];
+			$interest_found = TRUE;
+		}
+	}
+
+	// if professiopn is not in the table, insert profession into the table
+	if(!$interest_found)
+	{
+		$query = mysql_query("INSERT INTO interests VALUES(null, '$interest')");
+		if(!$query)
+			die("Unable to access database: " . mysql_error());
 	
+		$insertID_interest = mysql_insert_id();     // get an id of the inseted profession	
+	}
+	
+	/////// insert contacts seeking info ///////
+	$query = mysql_query(
+						"
+						UPDATE contact_seeking 
+						SET seeking_id='$insertID_seeking'
+						where contact_id = '$contact_id'
+						"
+						);
+	if(!$query)
+		die("Unable to access database: " . mysql_error());
+
+	/////// update seeking ///////
+
+	$insertID_seeking = 0;
+	$seeking_found = FALSE;
+
+	$query = mysql_query('SELECT * FROM seeking');
+	if(!$query)
+		die("Unable to access database: " . mysql_error());
+
+	// check if the profession is in the table
+	$rows = mysql_num_rows($query);
+
+	for($i = 0; $i < $rows; $i++)
+	{
+		$row = mysql_fetch_row($query);
+
+		// if profession is found
+		if($row[1] == $seeking)
+		{
+			$insertID_seeking = $row[0];
+			$seeking_found = TRUE;
+		}
+	}
+
+	// if professiopn is not in the table, insert profession into the table
+	if(!$seeking_found)
+	{
+		$query = mysql_query("INSERT INTO seeking VALUES(null, '$seeking')");
+		if(!$query)
+			die("Unable to access database: " . mysql_error());
+	
+		$insertID_seeking = mysql_insert_id();     // get an id of the inseted profession	
+	}
+	
+	/////// insert contacts interests info ///////
+	$query = mysql_query(
+						"
+						UPDATE contact_seeking 
+						SET seeking_id='$insertID_seeking'
+						where contact_id = '$contact_id'
+						"
+						);
+	if(!$query)
+		die("Unable to access database: " . mysql_error());	
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*/
 	header('Location: testphpmysql1.php');
 }
 
